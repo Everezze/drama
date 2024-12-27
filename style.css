@@ -1,0 +1,36 @@
+*{
+  box-sizing:border-box;
+}
+
+body{
+  padding:2rem;
+  margin:0;
+  position:relative;
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.task-parent{
+  border: 1px solid black;
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  flex-grow: 1;
+}
+
+.task-parent div{
+  padding:1rem;
+  background:salmon;
+  z-index: 10;
+  width:100%;
+  transition: margin .15s ease-out;
+}
+
+.task-container:hover{
+  cursor:pointer;
+}
+
+.task-parent div+div{
+  border-top: 1px solid black;
+}
