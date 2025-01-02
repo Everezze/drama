@@ -7,15 +7,15 @@ let isLast = false;
 
 function divTracker(e){
 	let task = e.currentTarget;
-	task.style.background = "red";
-	task.style.position = "absolute";
-	lastTask = task === divs[divs.length-1] ? divs[divs.length-2] : divs[divs.length-1];
-	console.log("lastTask is ", lastTask);
 	const elemStyles = window.getComputedStyle(task);
 	let top = parseInt(elemStyles.top,10);
 	let left = parseInt(elemStyles.left,10);
 	task.style.top = `${top + e.movementY}px`;
 	task.style.left = `${left + e.movementX}px`;
+	task.style.background = "red";
+	task.style.position = "absolute";
+	lastTask = task === divs[divs.length-1] ? divs[divs.length-2] : divs[divs.length-1];
+	console.log("lastTask is ", lastTask);
 
 	let topSide = task.getBoundingClientRect().top;
 	let bottomSide = task.getBoundingClientRect().bottom;
@@ -25,44 +25,47 @@ function divTracker(e){
 	let hoveredElement = determineHoveredElement(task,centerPoint,[topSide,bottomSide]);
 	console.log("hoel is : ",hoveredElement);
 
-
-	if(hoveredElement && !currentHover){
-		oldHover = currentHover = hoveredElement;
-		if(isLast){
-			currentHover.style.marginBottom = "2rem";
-			console.log("last style");
+	//else if(hoveredElement !== currentHover ){
+	//	oldHover = currentHover;
+	//	currentHover = hoveredElement;
+	//}
+	if(hoveredElement){
+		if(!currentHover){
+			oldHover = currentHover = hoveredElement;
+			if(isLast){
+				currentHover.style.marginBottom = "2rem";
+			}
+			else{
+				currentHover.style.marginTop = "2rem";
+			}
 		}
 		else{
-			currentHover.style.marginTop = "2rem";
-			console.log("else style");
+			oldHover = currentHover;
+			currentHover = hoveredElement;
+			if(isLast){
+				oldHover.style.marginTop = "";
+				currentHover.style.marginBottom = "2rem";
+			}
+			else{
+				oldHover.style.marginBottom = "";
+				oldHover.style.marginTop = "";
+				currentHover.style.marginTop = "2rem";
+			}
 		}
 	}
-	//&& hoveredElement
-	else if(!hoveredElement){
+	else{
 		if(isLast){
+			console.log("remove marg bottom of last");
 			currentHover.style.marginBottom = "";
+			//isLast = false;
 		}
 		else{
 			currentHover.style.marginTop = "";
 		}
 	}
-	else{
-		oldHover = currentHover;
-		currentHover = hoveredElement;
-		oldHover.style.marginTop = "";
-		currentHover.style.marginTop = "2rem";
-	}
-	//else if(hoveredElement !== currentHover ){
-	//	oldHover = currentHover;
-	//	currentHover = hoveredElement;
-	//}
-
-	if(isLast){
-		isLast = false;
-	}
 
 	console.log("old hover: ",oldHover,"current hover: ",currentHover);
-	e.currentTarget.addEventListener("mouseup",removeTracker);
+	e.currentTarget.addEventListener("mouseup",switchAndDisableDrag);
 };
 
 function addTracker(e){
@@ -76,7 +79,7 @@ divs.forEach(function(element){
 
 });
 
-function removeTracker(e){
+function switchAndDisableDrag(e){
 	//console.log("mousedown now");
 	let task = e.currentTarget;
 	task.removeEventListener("mousemove",divTracker);
@@ -111,9 +114,9 @@ function determineHoveredElement(task,centerPoint,sides){
 		if(!hoveredElement.classList.contains("task-container")){
 			if(parent.contains(hoveredElement) ){
 				if(hoveredElement!==parent){
-				hoveredElement = hoveredElement.closest("task-container");
-                //break;
-				return hoveredElement;
+					hoveredElement = hoveredElement.closest("task-container");
+					//break;
+					return hoveredElement;
 				}
 				else{
 					if(currentHover){
@@ -129,10 +132,14 @@ function determineHoveredElement(task,centerPoint,sides){
 		else{
 			console.log("entered thats is a task");
 			if(sides[i] <= hoveredElement.getBoundingClientRect()[topandbot[i]]){
+				if(isLast){
+					isLast = false;
+				}
 				console.log("distance is less, so higher");
 				return hoveredElement;
 			}
 			else if(hoveredElement === lastTask){
+				console.log("setting last to true");
 				isLast = true;
 				return hoveredElement;
 			}
