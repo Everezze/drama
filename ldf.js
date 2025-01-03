@@ -59,7 +59,7 @@ function divTracker(e){
 			currentHover.style.marginBottom = "";
 			//isLast = false;
 		}
-		else{
+		else if(currentHover){
 			currentHover.style.marginTop = "";
 		}
 	}
