@@ -6,16 +6,14 @@ body{
   padding:2rem;
   margin:0;
   position:relative;
-  display: flex;
-  align-items: center;
+  /*display: flex;
+  align-items: center;*/
   min-height: 100vh;
 }
 
 .task-parent{
   border: 1px solid black;
   position: relative;
-  max-width: 800px;
-  margin: 0 auto;
   flex-grow: 1;
 }
 
@@ -33,4 +31,17 @@ body{
 
 .task-parent div+div{
   border-top: 1px solid black;
+}
+
+.vert-drag{
+	max-width: 800px;
+	margin: 0 auto 4rem;
+}
+
+.hor-drag .task-parent{
+	display: flex;
+}
+
+.hor-drag .task-container+.task-container{
+	margin-left: 2rem;
 }

@@ -1,28 +1,61 @@
+const parent_container = document.querySelector(".vert-drag .task-parent");
+parent_container.direction = "hor";
 const divs = document.querySelectorAll(".task-container");
 const body = document.querySelector("body");
 let oldHover = false;
 let currentHover = false;
 let lastTask = false;
 let isLast = false;
+let activeParent = false;
+//const direction = false;
+const sides = {
+	"hor": ["left","right","Left","Right","height"],
+	"vert": ["top","bottom","Top","Bottom","width"]
+};
+
+parent_container.enableDrag = registerDrag;
+parent_container.enableDrag("vert");
+
+const horizontalParent = document.querySelector(".hor-drag .task-parent");
+horizontalParent.enableDrag = registerDrag;
+horizontalParent.enableDrag("hor");
+
+//divs.forEach(function(element){
+//	element.addEventListener("mousedown",addTracker);
+//	element.addEventListener("selectstart",removeSelection);
+//});
+
+function registerDrag(direction){
+	console.log(this.children);
+	let tasks = Array.from(this.children);
+	tasks.forEach(function(element){
+	element.addEventListener("mousedown", addTracker);
+	element.addEventListener("selectstart",removeSelection);
+	});
+	this.sides = sides[direction];
+	this.sideToGetCenterPoint = direction == "hor" ? "top":"left";
+}
 
 function divTracker(e){
 	let task = e.currentTarget;
-	const elemStyles = window.getComputedStyle(task);
-	let top = parseInt(elemStyles.top,10);
-	let left = parseInt(elemStyles.left,10);
-	task.style.top = `${top + e.movementY}px`;
-	task.style.left = `${left + e.movementX}px`;
-	task.style.background = "red";
 	task.style.position = "absolute";
+	task.style.background = "red";
+	//const parent = task.parentElement; 
+	const edges = activeParent.sides;
+	console.log("parent is",activeParent);
+	const elemStyles = window.getComputedStyle(task);
+	let taskFirstSide = parseInt(elemStyles["top"],10);
+	let taskSecondSide = parseInt(elemStyles["left"],10);
+	task.style.top = `${taskFirstSide + e.movementY}px`;
+	task.style.left = `${taskSecondSide + e.movementX}px`;
 	lastTask = task === divs[divs.length-1] ? divs[divs.length-2] : divs[divs.length-1];
 	console.log("lastTask is ", lastTask);
 
-	let topSide = task.getBoundingClientRect().top;
-	let bottomSide = task.getBoundingClientRect().bottom;
-	const containerSizes = body.getBoundingClientRect();
-	const centerPoint = containerSizes.left + (containerSizes.width /2);
+	const containerSizes = activeParent.getBoundingClientRect();
+	const centerPoint = containerSizes[activeParent.sideToGetCenterPoint] + (containerSizes[edges[edges.length-1]] /2);
+	console.log("center point value is : ",centerPoint);
 
-	let hoveredElement = determineHoveredElement(task,centerPoint,[topSide,bottomSide]);
+	let hoveredElement = determineHoveredElement(task,centerPoint,edges);
 	console.log("hoel is : ",hoveredElement);
 
 	//else if(hoveredElement !== currentHover ){
@@ -33,34 +66,34 @@ function divTracker(e){
 		if(!currentHover){
 			oldHover = currentHover = hoveredElement;
 			if(isLast){
-				currentHover.style.marginBottom = "2rem";
+				currentHover.style["margin"+edges[3]] = "2rem";
 			}
 			else{
-				currentHover.style.marginTop = "2rem";
+				currentHover.style["margin"+edges[2]] = "2rem";
 			}
 		}
 		else{
 			oldHover = currentHover;
 			currentHover = hoveredElement;
 			if(isLast){
-				oldHover.style.marginTop = "";
-				currentHover.style.marginBottom = "2rem";
+				oldHover.style["margin"+edges[2]] = "";
+				currentHover.style["margin"+edges[3]] = "2rem";
 			}
 			else{
-				oldHover.style.marginBottom = "";
-				oldHover.style.marginTop = "";
-				currentHover.style.marginTop = "2rem";
+				oldHover.style["margin"+edges[3]] = "";
+				oldHover.style["margin"+edges[2]] = "";
+				currentHover.style["margin"+edges[2]] = "2rem";
 			}
 		}
 	}
 	else{
 		if(isLast){
 			console.log("remove marg bottom of last");
-			currentHover.style.marginBottom = "";
+			currentHover.style["margin"+edges[3]] = "";
 			//isLast = false;
 		}
 		else if(currentHover){
-			currentHover.style.marginTop = "";
+			currentHover.style["margin"+edges[2]] = "";
 		}
 	}
 
@@ -71,13 +104,10 @@ function divTracker(e){
 function addTracker(e){
 	console.dir(e.currentTarget.getBoundingClientRect());
 	e.currentTarget.addEventListener("mousemove",divTracker);
+	//e.currentTarget.sides = sides[e.currentTarget.parentElement.direction];
+	console.log(activeParent = e.currentTarget.parentElement);
+	activeParent = e.currentTarget.parentElement;
 };
-
-divs.forEach(function(element){
-	element.addEventListener("mousedown",addTracker);
-	element.addEventListener("selectstart",removeSelection);
-
-});
 
 function switchAndDisableDrag(e){
 	//console.log("mousedown now");
@@ -99,7 +129,11 @@ function removeSelection(e){
 	e.preventDefault();
 }
 
-function determineHoveredElement(task,centerPoint,sides){
+function determineHoveredElement(task,centerPoint,edges){
+	const sides = [
+		task.getBoundingClientRect()[edges[0]],
+		task.getBoundingClientRect()[edges[1]]
+	];
     console.log("sides are: ",sides);
 	let topandbot = ["top","bottom"];
     let hoveredElement;
@@ -131,7 +165,7 @@ function determineHoveredElement(task,centerPoint,sides){
 		}
 		else{
 			console.log("entered thats is a task");
-			if(sides[i] <= hoveredElement.getBoundingClientRect()[topandbot[i]]){
+			if(sides[i] <= hoveredElement.getBoundingClientRect()[edges[i]]){
 				if(isLast){
 					isLast = false;
 				}
