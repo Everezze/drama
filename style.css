@@ -15,33 +15,40 @@ body{
   border: 1px solid black;
   position: relative;
   flex-grow: 1;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .task-parent div{
   padding:1rem;
   background:salmon;
-  z-index: 10;
+  /*z-index: 10;*/
   width:100%;
   transition: margin .15s ease-out;
+  flex-grow: 1;
 }
 
 .task-container:hover{
   cursor:pointer;
 }
 
-.task-parent div+div{
+.vert-drag .task-parent div+div{
   border-top: 1px solid black;
 }
 
+.hor-drag .task-parent div+div{
+  border-left: 1px solid black;
+}
+
+
 .vert-drag{
-	max-width: 800px;
-	margin: 0 auto 4rem;
+	margin-bottom: 4rem;
 }
 
 .hor-drag .task-parent{
 	display: flex;
 }
 
-.hor-drag .task-container+.task-container{
+/*.hor-drag .task-container+.task-container{
 	margin-left: 2rem;
-}
+}*/

@@ -1,6 +1,7 @@
 const parent_container = document.querySelector(".vert-drag .task-parent");
-parent_container.direction = "hor";
-const divs = document.querySelectorAll(".task-container");
+
+//parent_container.direction = "hor";
+let divs;
 const body = document.querySelector("body");
 let oldHover = false;
 let currentHover = false;
@@ -34,16 +35,36 @@ function registerDrag(direction){
 	});
 	this.sides = sides[direction];
 	this.sideToGetCenterPoint = direction == "hor" ? "top":"left";
+	this.direction = direction;
 }
 
 function divTracker(e){
 	let task = e.currentTarget;
-	task.style.position = "absolute";
-	task.style.background = "red";
+	const elemStyles = window.getComputedStyle(task);
+	if(activeParent.direction == "hor"){
+		//task.style.width = elemStyles["width"]; 
+		if(activeParent.needAdjustment){
+			console.log("old left =>",task.getBoundingClientRect()["left"]);
+			let oldWidth = task.getBoundingClientRect()["width"];
+			let oldLeft = task.getBoundingClientRect()["left"];
+			task.style.position = "absolute";
+			task.style.background = "red";
+			task.style.left = `${oldLeft - activeParent.getBoundingClientRect().left}px`;
+			task.style.width = `${oldWidth}px`;
+			activeParent.needAdjustment = false;
+		}
+	}
+	else{
+		task.style.width = "100%";
+		task.style.position = "absolute";
+		task.style.background = "red";
+	}
+	//task.style["width"] = "300px";
+	console.log("width of task is: ",task.style["width"]);
 	//const parent = task.parentElement; 
 	const edges = activeParent.sides;
+	console.log("edges are : ",edges);
 	console.log("parent is",activeParent);
-	const elemStyles = window.getComputedStyle(task);
 	let taskFirstSide = parseInt(elemStyles["top"],10);
 	let taskSecondSide = parseInt(elemStyles["left"],10);
 	task.style.top = `${taskFirstSide + e.movementY}px`;
@@ -102,11 +123,16 @@ function divTracker(e){
 };
 
 function addTracker(e){
-	console.dir(e.currentTarget.getBoundingClientRect());
-	e.currentTarget.addEventListener("mousemove",divTracker);
+	let el = e.currentTarget;
+	console.dir(el.getBoundingClientRect());
+	el.addEventListener("mousemove",divTracker);
 	//e.currentTarget.sides = sides[e.currentTarget.parentElement.direction];
-	console.log(activeParent = e.currentTarget.parentElement);
-	activeParent = e.currentTarget.parentElement;
+	console.log(activeParent = el.parentElement);
+	activeParent = el.parentElement;
+	divs = activeParent.children;
+	if(window.getComputedStyle(activeParent)["display"] == "flex"){
+		activeParent.needAdjustment = true;
+	}
 };
 
 function switchAndDisableDrag(e){
@@ -116,13 +142,35 @@ function switchAndDisableDrag(e){
 	task.style.position = "static";
 	task.style.top = "initial";
 	task.style.left = "initial";
-	task.style.background = "";
-	oldHover = false;
-	currentHover = false;
+	task.style.width = "";
+	//task.style.background = "";
+	currentHover.style.transition = "none";
+	if(currentHover){
+		if(isLast){
+			activeParent.insertBefore(task,null);
+			currentHover.style["margin"+activeParent.sides[3]] = "";
+		}
+		else{
+			activeParent.insertBefore(task,currentHover);
+			currentHover.style["margin"+activeParent.sides[2]] = "";
+		}
+	}
+	//currentHover.style[];
+	//oldHover = false;
+	//currentHover = false;
 };
 
-function getHoveredElement(centerPoint,side){
-	return document.elementFromPoint(centerPoint,side);
+function getHoveredElement(centerPoint,side,direction){
+	let A,B;
+	if(direction  =="hor"){
+		A = side;
+		B = centerPoint;
+	}
+	else{
+		A = centerPoint;
+		B = side;
+	}
+	return document.elementFromPoint(A,B);
 }
 
 function removeSelection(e){
@@ -135,14 +183,14 @@ function determineHoveredElement(task,centerPoint,edges){
 		task.getBoundingClientRect()[edges[1]]
 	];
     console.log("sides are: ",sides);
-	let topandbot = ["top","bottom"];
+	//let topandbot = ["top","bottom"];
     let hoveredElement;
 	const parent = task.parentElement;
     //console.log("parent task is: ",parent);
 	let i =0;
 	while(i<2){
 		task.style.visibility="hidden";
-		hoveredElement = getHoveredElement(centerPoint,sides[i]);
+		hoveredElement = getHoveredElement(centerPoint,sides[i],parent.direction);
 		task.style.visibility="initial";
         console.log("with i =",i, " temp element is: ",hoveredElement);
 		if(!hoveredElement.classList.contains("task-container")){
