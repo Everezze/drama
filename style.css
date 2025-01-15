@@ -52,3 +52,13 @@ body{
 /*.hor-drag .task-container+.task-container{
 	margin-left: 2rem;
 }*/
+
+@keyframes valid_insert {
+	from{background: #00ab66;}
+	/*to{background: transparent;}*/
+}
+
+@keyframes invalid_insert {
+	from{background: #d10000;}
+	/*to{background: revert;}*/
+}

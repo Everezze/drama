@@ -1,6 +1,7 @@
 const parent_container = document.querySelector(".vert-drag .task-parent");
 
 //parent_container.direction = "hor";
+let currentTask = false;
 let divs;
 const body = document.querySelector("body");
 let oldHover = false;
@@ -107,7 +108,7 @@ function divTracker(e){
 			}
 		}
 	}
-	else{
+	else if(currentHover){
 		if(isLast){
 			console.log("remove marg bottom of last");
 			currentHover.style["margin"+edges[3]] = "";
@@ -116,16 +117,17 @@ function divTracker(e){
 		else if(currentHover){
 			currentHover.style["margin"+edges[2]] = "";
 		}
+		oldHover = currentHover = false;
 	}
 
 	console.log("old hover: ",oldHover,"current hover: ",currentHover);
-	e.currentTarget.addEventListener("mouseup",switchAndDisableDrag);
 };
 
 function addTracker(e){
 	let el = e.currentTarget;
 	console.dir(el.getBoundingClientRect());
 	el.addEventListener("mousemove",divTracker);
+	el.addEventListener("mouseup",switchAndDisableDrag);
 	//e.currentTarget.sides = sides[e.currentTarget.parentElement.direction];
 	console.log(activeParent = el.parentElement);
 	activeParent = el.parentElement;
@@ -136,15 +138,18 @@ function addTracker(e){
 };
 
 function switchAndDisableDrag(e){
-	//console.log("mousedown now");
+	console.log("mouseup now","currhov: ",currentHover);
 	let task = e.currentTarget;
+	currentTask = task;
+	task.style.animation = "none";
+	console.log("removing animation value is: ",task.style.animation);
 	task.removeEventListener("mousemove",divTracker);
 	task.style.position = "static";
 	task.style.top = "initial";
 	task.style.left = "initial";
 	task.style.width = "";
+	task.style.background = "";
 	//task.style.background = "";
-	currentHover.style.transition = "none";
 	if(currentHover){
 		if(isLast){
 			activeParent.insertBefore(task,null);
@@ -154,6 +159,12 @@ function switchAndDisableDrag(e){
 			activeParent.insertBefore(task,currentHover);
 			currentHover.style["margin"+activeParent.sides[2]] = "";
 		}
+		task.style.animation = "valid_insert .5s ease-out";
+		oldHover = currentHover = false;
+	}
+	else{
+		setTimeout( () => {currentTask.style.animation = "invalid_insert .5s ease-out";},1);
+		//task.style.animation = "invalid_insert .5s ease-out";
 	}
 	//currentHover.style[];
 	//oldHover = false;
