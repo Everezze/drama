@@ -114,7 +114,7 @@ function divTracker(e){
 			currentHover.style["margin"+edges[3]] = "";
 			//isLast = false;
 		}
-		else if(currentHover){
+		else{
 			currentHover.style["margin"+edges[2]] = "";
 		}
 		oldHover = currentHover = false;
