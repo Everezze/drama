@@ -81,8 +81,13 @@ function divTracker(e){
 	task.style.left = `${context["taskLeft"] + e.movementX}px`;
 	context["taskTop"] += e.movementY;
 	context["taskLeft"] += e.movementX;
-	context["firstSide"] += e.movementY;
-	context["secondSide"] += e.movementY;
+	if(context.direction == "vert"){
+		context["firstSide"] += e.movementY;
+		context["secondSide"] += e.movementY;
+	}else{
+		context["firstSide"] += e.movementX;
+		context["secondSide"] += e.movementX;
+	}
 
 	//return;
 	const hoveredElement = determineHoveredElement(task,context);
