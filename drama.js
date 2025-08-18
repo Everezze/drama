@@ -1,31 +1,15 @@
-const parent_container = document.querySelector(".vert-drag .task-parent");
-
-//parent_container.direction = "hor";
+const body = document.querySelector("body");
+const sides = {
+	"hor": ["left","right","Left","Right","height"],
+	"vert": ["top","bottom","Top","Bottom","width"]
+};
 let currentTask = false;
 let divs;
-const body = document.querySelector("body");
 let oldHover = false;
 let currentHover = false;
 let lastTask = false;
 let isLast = false;
 let activeParent = false;
-//const direction = false;
-const sides = {
-	"hor": ["left","right","Left","Right","height"],
-	"vert": ["top","bottom","Top","Bottom","width"]
-};
-
-//parent_container.enableDrag = registerDrag;
-//parent_container.enableDrag("vert");
-//
-//const horizontalParent = document.querySelector(".hor-drag .task-parent");
-//horizontalParent.enableDrag = registerDrag;
-//horizontalParent.enableDrag("hor");
-
-//divs.forEach(function(element){
-//	element.addEventListener("mousedown",addTracker);
-//	element.addEventListener("selectstart",removeSelection);
-//});
 
 function Drag(container,settings){
 	container = document.querySelector(container);
@@ -38,6 +22,8 @@ function Drag(container,settings){
 	this.dragger = container;
 	this.draggins = container.children;
 	this.adjustment = false;
+	this.direction = "vert";
+	this.sides = sides["vert"];
 	let tasks = Array.from(container.children);
 	tasks.forEach(function(element){
 	element.addEventListener("mousedown", addTracker);
@@ -46,9 +32,9 @@ function Drag(container,settings){
 
 	if(settings.direction == "hor"){
 		this.adjustment = true;
+		this.direction = "hor";
+		this.sides = sides["hor"];
 	}
-	this.direction = settings.direction;
-	this.sides = sides[settings.direction];
 	Drag.prototype.contexts[newId] = this;
 };
 
@@ -58,8 +44,10 @@ Drag.prototype.lastTask = null;
 Drag.prototype.isLast = null;
 Drag.prototype.contexts = {};
 Drag.prototype.lastId = 0;
+Drag.prototype.firstDrag = true;
 
-const customDrag = new Drag(".vert-drag .task-parent",{direction:"vert"});
+const customDrag = new Drag(".vert-drag .task-parent",{});
+const horDrag = new Drag(".hor-drag .task-parent",{direction:"hor"});
 
 function divTracker(e){
 	const task = e.currentTarget;
@@ -71,17 +59,19 @@ function divTracker(e){
 	//};
 	//const type = themesData[currentList.dataset.type];
 	//const elemStyles = window.getComputedStyle(task);
-	if(context.adjustment){
-		console.log("old left =>",task.getBoundingClientRect()["left"]);
-		const boundingRect = task.getBoundingClientRect();
-		let oldWidth = boundingRect.width;
-		let oldLeft = boundingRect.left;
-		task.style.left = `${oldLeft - context.dragger.getBoundingClientRect().left}px`;
-		task.style.width = `${oldWidth}px`;
-		context.adjustment = false;
-	}
-	else{
-		task.style.width = "100%";
+	if(context.firstDrag){
+		if(context.adjustment){
+			console.log("old left =>",task.getBoundingClientRect()["left"]);
+			const boundingRect = task.getBoundingClientRect();
+			let oldWidth = boundingRect.width;
+			let oldLeft = boundingRect.left;
+			task.style.left = `${oldLeft - context.dragger.getBoundingClientRect().left}px`;
+			task.style.width = `${oldWidth}px`;
+		}
+		else{
+			task.style.width = "100%";
+		}
+		context.firstDrag = false;
 	}
 	task.style.position = "absolute";
 	task.style.setProperty("--bg-light","80%");
@@ -150,7 +140,7 @@ function switchAndDisableDrag(e){
 	task.style.background = "";
 	//task.style.background = "";
 	if(context.currentHover){
-		if(isLast){
+		if(context.isLast){
 			activeParent.insertBefore(task,null);
 			context.currentHover.style["margin"+context.sides[3]] = "";
 		}
@@ -165,9 +155,7 @@ function switchAndDisableDrag(e){
 		setTimeout( () => {task.style.animation = "invalid_insert .5s ease-out";},1);
 		//task.style.animation = "invalid_insert .5s ease-out";
 	}
-	//currentHover.style[];
-	//oldHover = false;
-	//currentHover = false;
+	context.firstDrag = true;
 };
 
 function getHoveredElement(centerPoint,side,direction){
@@ -213,29 +201,8 @@ function determineHoveredElement(task,context){
 		hoveredElement = getHoveredElement(centerPoint,edges[i],context.direction);
 		task.style.visibility="initial";
         console.log("with i =",i, " temp element is: ",hoveredElement);
-		//if(!hoveredElement.classList.contains("task-container")){
-		//while(hoveredElement.parentElement !== parent){
-		//	hoveredElement = hoveredElement.parentElement;
-		//	console.log("in while(hoveredElement): ",hoveredElement);
-		//};
-		//if(parent.contains(hoveredElement)){
-		//	if(hoveredElement!==parent){
-		//		//hoveredElement = hoveredElement.closest("task-container");
-		//		//break;
-		//		return hoveredElement;
-		//	}
-		//	else{
-		//		if(context.currentHover){
-		//			return context.currentHover;
-		//		}
-		//	}
-		//}
-			//else if(context.currentHover && hoveredElement === parent){
-			//	return context.currentHover;
-			//}
-			//add condition where parent border is the hovered element;
-		//}
 		console.log("parent container  is:",parent);
+
 		if(parent.contains(hoveredElement)){
 			if(hoveredElement === parent){
 				if(context.currentHover){
@@ -266,29 +233,8 @@ function determineHoveredElement(task,context){
 				return hoveredElement;
 			}
 		}
-		//if(hoveredElement === parent){
-		//	if(context.currentHover){
-		//		return context.currentHover;
-		//	};
-		//}
-		//else{
-		//	console.log("entered thats is a task");
-		//	if(edges[i] <= hoveredElement.getBoundingClientRect()[sides[i]]){
-		//		if(context.isLast){
-		//			context.isLast = false;
-		//		}
-		//		console.log("distance is less, so higher");
-		//		return hoveredElement;
-		//	}
-		//	else if(hoveredElement === context.lastTask){
-		//		console.log("setting last to true");
-		//		context.isLast = true;
-		//		return hoveredElement;
-		//	}
-		//}
 		i++;
 	}
-    //console.log("hovered element is: ",hoveredElement);
 	return false;
 }
 
@@ -296,17 +242,18 @@ function setupDrag(e){
 	const el = e.currentTarget;
 	const dragProto = Drag.prototype;
 	const dragId = el.dataset.dragId;
-	const dragData = dragProto.contexts[dragId];
+	const context = dragProto.contexts[dragId];
 	console.log("id of container is: ",el.dataset.dragId);
 	const elDimensions = el.getBoundingClientRect();
-	const sideToGetCenterPoint = dragData.direction == "vert" ?
+	const sideToGetCenterPoint = context.direction == "vert" ?
 		"left":"top";
-	Drag.prototype.centerPoint = elDimensions[sideToGetCenterPoint] + (elDimensions[dragData.sides[dragData.sides.length-1]] /2);
+	Drag.prototype.centerPoint = elDimensions[sideToGetCenterPoint] + (elDimensions[context.sides[context.sides.length-1]] /2);
 }
 
 function updateHint(hoveredElement,context){
 	const edges = context.sides;
 	if(hoveredElement){
+		console.log("hoveredEl is: ",hoveredElement);
 		if(!context.currentHover){
 			context.oldHover = context.currentHover = hoveredElement;
 			if(context.isLast){
