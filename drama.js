@@ -1,17 +1,4 @@
-const body = document.querySelector("body");
-const sides = {
-	"hor": ["left","right","Left","Right","height"],
-	"vert": ["top","bottom","Top","Bottom","width"]
-};
-let currentTask = false;
-let divs;
-let oldHover = false;
-let currentHover = false;
-let lastTask = false;
-let isLast = false;
-let activeParent = false;
-
-function Drama(container,settings){
+export function Drama(container,settings){
 	container = document.querySelector(container);
 	if(!container){
 		return null;
@@ -37,6 +24,19 @@ function Drama(container,settings){
 	}
 	Drama.prototype.contexts[newId] = this;
 };
+
+const body = document.querySelector("body");
+const sides = {
+	"hor": ["left","right","Left","Right","height"],
+	"vert": ["top","bottom","Top","Bottom","width"]
+};
+let currentTask = false;
+let divs;
+let oldHover = false;
+let currentHover = false;
+let lastTask = false;
+let isLast = false;
+let activeParent = false;
 
 Drama.prototype.currentHover = null;
 Drama.prototype.oldHover = null;
@@ -178,10 +178,6 @@ function removeSelection(e){
 }
 
 function determineHoveredElement(task,context){
-	//const sides = [
-	//	task.getBoundingClientRect()[edges[0]],
-	//	task.getBoundingClientRect()[edges[1]]
-	//];
 	const centerPoint = context.centerPoint;
 	const sides = [
 		context.sides[0],
