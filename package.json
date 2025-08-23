@@ -1,0 +1,24 @@
+{
+  "name": "drama",
+  "version": "1.0.0",
+  "description": "a simple dragging manager for both axis",
+  "main": "drama.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Everezze/drama.git"
+  },
+  "keywords": [
+    "drag",
+    "drop",
+    "switch"
+  ],
+  "author": "Everezze",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/Everezze/drama/issues"
+  },
+  "homepage": "https://github.com/Everezze/drama#readme"
+}

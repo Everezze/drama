@@ -11,12 +11,12 @@ let lastTask = false;
 let isLast = false;
 let activeParent = false;
 
-function Drag(container,settings){
+function Drama(container,settings){
 	container = document.querySelector(container);
 	if(!container){
 		return null;
 	}
-	const newId = ++Drag.prototype.lastId;
+	const newId = ++Drama.prototype.lastId;
 	container.addEventListener("mousedown",setupDrag,{capture:true});
 	container.dataset.dragId = newId;
 	this.dragger = container;
@@ -35,25 +35,22 @@ function Drag(container,settings){
 		this.direction = "hor";
 		this.sides = sides["hor"];
 	}
-	Drag.prototype.contexts[newId] = this;
+	Drama.prototype.contexts[newId] = this;
 };
 
-Drag.prototype.currentHover = null;
-Drag.prototype.oldHover = null;
-Drag.prototype.lastTask = null;
-Drag.prototype.isLast = null;
-Drag.prototype.contexts = {};
-Drag.prototype.lastId = 0;
-Drag.prototype.firstDrag = true;
-
-const customDrag = new Drag(".vert-drag .task-parent",{});
-const horDrag = new Drag(".hor-drag .task-parent",{direction:"hor"});
+Drama.prototype.currentHover = null;
+Drama.prototype.oldHover = null;
+Drama.prototype.lastTask = null;
+Drama.prototype.isLast = null;
+Drama.prototype.contexts = {};
+Drama.prototype.lastId = 0;
+Drama.prototype.firstDrag = true;
 
 function divTracker(e){
 	const task = e.currentTarget;
 	const contextId = task.closest("[data-drag-id]").dataset.dragId;
-	const context = Drag.prototype.contexts[contextId];
-	const dragData = Drag.prototype;
+	const context = Drama.prototype.contexts[contextId];
+	const dragData = Drama.prototype;
 	//if(!activeHint){
 	//	activeHint = true;
 	//};
@@ -97,7 +94,7 @@ function divTracker(e){
 function addTracker(e){
 	const el = e.currentTarget;
 	const container = el.closest("[data-drag-id]");
-	const context = Drag.prototype.contexts[container.dataset.dragId];
+	const context = Drama.prototype.contexts[container.dataset.dragId];
 	//console.dir(el.getBoundingClientRect());
 	el.addEventListener("mousemove",divTracker);
 	el.addEventListener("mouseup",switchAndDisableDrag);
@@ -109,7 +106,7 @@ function addTracker(e){
 	//	activeParent.needAdjustment = true;
 	//}
 	const draggins = container.children;
-	Drag.prototype.lastTask = el === draggins[draggins.length-1] ?
+	Drama.prototype.lastTask = el === draggins[draggins.length-1] ?
 		draggins[draggins.length-2] :
 		draggins[draggins.length-1];
 
@@ -131,7 +128,7 @@ function addTracker(e){
 function switchAndDisableDrag(e){
 	let task = e.currentTarget;
 	const dragId = task.closest("[data-drag-id]").dataset.dragId;
-	const context = Drag.prototype.contexts[dragId];
+	const context = Drama.prototype.contexts[dragId];
 	const activeParent = context.dragger;
 	console.log("mouseup now","currhov: ",context.currentHover);
 	//currentTask = task;
@@ -245,14 +242,14 @@ function determineHoveredElement(task,context){
 
 function setupDrag(e){
 	const el = e.currentTarget;
-	const dragProto = Drag.prototype;
+	const dragProto = Drama.prototype;
 	const dragId = el.dataset.dragId;
 	const context = dragProto.contexts[dragId];
 	console.log("id of container is: ",el.dataset.dragId);
 	const elDimensions = el.getBoundingClientRect();
 	const sideToGetCenterPoint = context.direction == "vert" ?
 		"left":"top";
-	Drag.prototype.centerPoint = elDimensions[sideToGetCenterPoint] + (elDimensions[context.sides[context.sides.length-1]] /2);
+	context.centerPoint = elDimensions[sideToGetCenterPoint] + (elDimensions[context.sides[context.sides.length-1]] /2);
 }
 
 function updateHint(hoveredElement,context){
