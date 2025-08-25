@@ -1,5 +1,5 @@
 {
-  "name": "drama",
+  "name": "@everezze/drama",
   "version": "1.0.0",
   "description": "a simple dragging manager for both axis",
   "main": "drama.js",
