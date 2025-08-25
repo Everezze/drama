@@ -6,6 +6,7 @@ export function Drama(container,settings){
 	const newId = ++Drama.prototype.lastId;
 	container.addEventListener("mousedown",setupDrag,{capture:true});
 	container.dataset.dragId = newId;
+	container.style.position = "relative";
 	this.dragger = container;
 	this.draggins = container.children;
 	this.adjustment = false;
@@ -17,7 +18,7 @@ export function Drama(container,settings){
 	element.addEventListener("selectstart",removeSelection);
 	});
 
-	if(settings.direction == "hor"){
+	if(settings && settings.direction == "hor"){
 		this.adjustment = true;
 		this.direction = "hor";
 		this.sides = sides["hor"];
@@ -25,18 +26,10 @@ export function Drama(container,settings){
 	Drama.prototype.contexts[newId] = this;
 };
 
-const body = document.querySelector("body");
 const sides = {
 	"hor": ["left","right","Left","Right","height"],
 	"vert": ["top","bottom","Top","Bottom","width"]
 };
-let currentTask = false;
-let divs;
-let oldHover = false;
-let currentHover = false;
-let lastTask = false;
-let isLast = false;
-let activeParent = false;
 
 Drama.prototype.currentHover = null;
 Drama.prototype.oldHover = null;
@@ -68,10 +61,10 @@ function divTracker(e){
 		else{
 			task.style.width = "100%";
 		}
+		task.style.position = "absolute";
+		task.style.setProperty("--bg-light","80%");
 		context.firstDrag = false;
 	}
-	task.style.position = "absolute";
-	task.style.setProperty("--bg-light","80%");
 	//console.log("result of top with movement is: ",`${draggingContext['taskFirstSide'] + e.movementY}px`);
 	console.log("last taskTop : ",context.taskTop,"\nafter movement value of tasktop is ",context["taskTop"] + e.movementY);
 	task.style.top = `${context["taskTop"] + e.movementY}px`;
@@ -98,13 +91,6 @@ function addTracker(e){
 	//console.dir(el.getBoundingClientRect());
 	el.addEventListener("mousemove",divTracker);
 	el.addEventListener("mouseup",switchAndDisableDrag);
-	//e.currentTarget.sides = sides[e.currentTarget.parentElement.direction];
-	//console.log(activeParent = el.parentElement);
-	//activeParent = el.parentElement;
-	//divs = activeParent.children;
-	//if(window.getComputedStyle(activeParent)["display"] == "flex"){
-	//	activeParent.needAdjustment = true;
-	//}
 	const draggins = container.children;
 	Drama.prototype.lastTask = el === draggins[draggins.length-1] ?
 		draggins[draggins.length-2] :
@@ -112,9 +98,6 @@ function addTracker(e){
 
 	const elementRectangle = el.getBoundingClientRect();
 	const elementStyles = window.getComputedStyle(el);
-	//const edges = draggingContext["sides"];
-	//context["taskTop"] = parseInt(elementRectangle["top"],10);
-	//context["taskLeft"] = parseInt(elementRectangle["left"],10);
 	context["firstSide"] = parseInt(elementRectangle[context.sides[0]],10);
 	context["secondSide"] = parseInt(elementRectangle[context.sides[1]],10);
 	context["taskTop"] = el.offsetTop;

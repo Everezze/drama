@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "a simple dragging manager for both axis",
   "main": "drama.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
