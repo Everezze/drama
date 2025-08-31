@@ -1,4 +1,4 @@
-export function Drama(container,settings){
+export function Drama(container,settings = {hint:[]}){
 	container = document.querySelector(container);
 	if(!container){
 		return null;
@@ -18,10 +18,31 @@ export function Drama(container,settings){
 	element.addEventListener("selectstart",removeSelection);
 	});
 
-	if(settings && settings.direction == "hor"){
-		this.adjustment = true;
-		this.direction = "hor";
-		this.sides = sides["hor"];
+	if(settings){
+		if(settings.direction == "hor"){
+			this.adjustment = true;
+			this.direction = "hor";
+			this.sides = sides["hor"];
+		}
+
+		switch(settings.hint.length){
+			case 1:
+				this.dropColor = [settings.hint[0]];
+				break;
+			case 2:
+				this.dropColor = [settings.hint[0],settings.hint[1]];
+				break;
+			default:
+				console.log("wrong number of arguments");
+				this.dropColor = [];
+		}
+
+		if(settings.color){
+			this.dragColor = settings.color;
+		}
+		else{
+			this.dragColor = defaultBackgroundColor;
+		}
 	}
 	Drama.prototype.contexts[newId] = this;
 };
@@ -30,6 +51,8 @@ const sides = {
 	"hor": ["left","right","Left","Right","height"],
 	"vert": ["top","bottom","Top","Bottom","width"]
 };
+
+const defaultBackgroundColor = "hsl(0,0%,70%)";
 
 Drama.prototype.currentHover = null;
 Drama.prototype.oldHover = null;
@@ -50,6 +73,7 @@ function divTracker(e){
 	//const type = themesData[currentList.dataset.type];
 	//const elemStyles = window.getComputedStyle(task);
 	if(context.firstDrag){
+		let tempElement = task;
 		if(context.adjustment){
 			console.log("old left =>",task.getBoundingClientRect()["left"]);
 			const boundingRect = task.getBoundingClientRect();
@@ -62,7 +86,8 @@ function divTracker(e){
 			task.style.width = "100%";
 		}
 		task.style.position = "absolute";
-		task.style.setProperty("--bg-light","80%");
+		task.style.backgroundColor = context.dragColor;
+		//task.style.setProperty("--bg-light","80%");
 		context.firstDrag = false;
 	}
 	//console.log("result of top with movement is: ",`${draggingContext['taskFirstSide'] + e.movementY}px`);
@@ -79,7 +104,6 @@ function divTracker(e){
 		context["secondSide"] += e.movementX;
 	}
 
-	//return;
 	const hoveredElement = determineHoveredElement(task,context);
 	updateHint(hoveredElement,context);
 };
@@ -102,10 +126,6 @@ function addTracker(e){
 	context["secondSide"] = parseInt(elementRectangle[context.sides[1]],10);
 	context["taskTop"] = el.offsetTop;
 	context["taskLeft"] = el.offsetLeft;
-	//context["taskLeft"] = elementStyles[context.sides[1]] == "auto" ? 0:elementStyles[context.sides[1]];
-	console.log("last task from proto is: ",context.lastTask);
-	console.log("initial top is: ",context.taskTop);
-	console.log("initial left is: ",context.taskLeft);
 };
 
 function switchAndDisableDrag(e){
@@ -114,6 +134,7 @@ function switchAndDisableDrag(e){
 	const context = Drama.prototype.contexts[dragId];
 	const activeParent = context.dragger;
 	console.log("mouseup now","currhov: ",context.currentHover);
+	task.style.backgroundColor = "";
 	//currentTask = task;
 	task.style.animation = "none";
 	console.log("removing animation value is: ",task.style.animation);
@@ -133,11 +154,15 @@ function switchAndDisableDrag(e){
 			activeParent.insertBefore(task,context.currentHover);
 			context.currentHover.style["margin"+context.sides[2]] = "";
 		}
-		task.style.animation = "valid_insert .5s ease-out";
+		task.animate([{background:context.dropColor[1]},{background:""}],500);
+		//task.style.animation = "valid_insert .5s ease-out";
 		//context.oldHover = context.currentHover = false;
 	}
 	else{
-		setTimeout( () => {task.style.animation = "invalid_insert .5s ease-out";},1);
+		setTimeout( () => {
+			//task.style.animation = "invalid_insert .5s ease-out";
+			task.animate([{background:context.dropColor[0]},{background:""}],500);
+		},1);
 		//task.style.animation = "invalid_insert .5s ease-out";
 	}
 	context.firstDrag = true;
