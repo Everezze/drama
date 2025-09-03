@@ -1,4 +1,5 @@
-export function Drama(container,settings = {hint:[]}){
+function Drama(container,
+	{direction="vert",hint=[],color=null,transition=null,spacing="2rem"} = {}){
 	container = document.querySelector(container);
 	if(!container){
 		return null;
@@ -12,38 +13,41 @@ export function Drama(container,settings = {hint:[]}){
 	this.adjustment = false;
 	this.direction = "vert";
 	this.sides = sides["vert"];
+	this.spacing = spacing;
 	let tasks = Array.from(container.children);
 	tasks.forEach(function(element){
 	element.addEventListener("mousedown", addTracker);
 	element.addEventListener("selectstart",removeSelection);
+		if(transition){
+			element.style.transition = transition;
+		};
 	});
 
-	if(settings){
-		if(settings.direction == "hor"){
-			this.adjustment = true;
-			this.direction = "hor";
-			this.sides = sides["hor"];
-		}
+	if(direction == "hor"){
+		this.adjustment = true;
+		this.direction = "hor";
+		this.sides = sides["hor"];
+	};
 
-		switch(settings.hint.length){
-			case 1:
-				this.dropColor = [settings.hint[0]];
-				break;
-			case 2:
-				this.dropColor = [settings.hint[0],settings.hint[1]];
-				break;
-			default:
-				console.log("wrong number of arguments");
-				this.dropColor = [];
-		}
+	switch(hint.length){
+		case 1:
+			this.dropColor = [hint[0]];
+			break;
+		case 2:
+			this.dropColor = [hint[0],hint[1]];
+			break;
+		default:
+			console.log("wrong number of arguments");
+			this.dropColor = [];
+	};
 
-		if(settings.color){
-			this.dragColor = settings.color;
-		}
-		else{
-			this.dragColor = defaultBackgroundColor;
-		}
+	if(color){
+		this.dragColor = color;
 	}
+	else{
+		this.dragColor = defaultBackgroundColor;
+	};
+
 	Drama.prototype.contexts[newId] = this;
 };
 
@@ -263,10 +267,10 @@ function updateHint(hoveredElement,context){
 		if(!context.currentHover){
 			context.oldHover = context.currentHover = hoveredElement;
 			if(context.isLast){
-				context.currentHover.style["margin"+edges[3]] = "2rem";
+				context.currentHover.style["margin"+edges[3]] = context.spacing;
 			}
 			else{
-				context.currentHover.style["margin"+edges[2]] = "2rem";
+				context.currentHover.style["margin"+edges[2]] = context.spacing;
 			}
 		}
 		else{
@@ -274,12 +278,12 @@ function updateHint(hoveredElement,context){
 			context.currentHover = hoveredElement;
 			if(context.isLast){
 				context.oldHover.style["margin"+edges[2]] = "";
-				context.currentHover.style["margin"+edges[3]] = "2rem";
+				context.currentHover.style["margin"+edges[3]] = context.spacing;
 			}
 			else{
 				context.oldHover.style["margin"+edges[3]] = "";
 				context.oldHover.style["margin"+edges[2]] = "";
-				context.currentHover.style["margin"+edges[2]] = "2rem";
+				context.currentHover.style["margin"+edges[2]] = context.spacing;
 			}
 		}
 	}
