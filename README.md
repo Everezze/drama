@@ -19,7 +19,7 @@ able to do it both vertically and horizontally !
     //values after.
     
     selector: any valid css selector, if element not found return empty object.
-    **`The selector MUST be the direct parent`** of the elements you want to drag!
+    THE SELECTOR MUST BE THE DIRECT PARENT OF THE ELEMENTS YOU WANT TO DRAG!
 
     options: {
         direction:"hor" or "vert",
@@ -39,7 +39,8 @@ able to do it both vertically and horizontally !
 
     //example
     const options = {color:hsl(211,87%,50%),hint:['#d10000','#00ab66'],
-    transition: "margin .15s ease-out"}
+    transition: "margin .15s ease-out"};
+
     new Drama(.container,options);
 ```
 
