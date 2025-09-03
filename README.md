@@ -19,7 +19,7 @@ able to do it both vertically and horizontally !
     //values after.
     
     selector: any valid css selector, if element not found return empty object.
-    **The selector MUST be the direct parent** of the elements you want to drag!
+    **`The selector MUST be the direct parent`** of the elements you want to drag!
 
     options: {
         direction:"hor" or "vert",
@@ -44,14 +44,14 @@ able to do it both vertically and horizontally !
 ```
 
 #### Gotchas
-    * The dragging manager won't look for the nearest colored ancestor to match
-    background so you will always want to specify the color option or else you
-    will have a default grey one.
+* The dragging manager won't look for the nearest colored ancestor to match
+background so you will always want to specify the color option or else you
+will have a default grey one.
 
 ### Installation
 
 ```sh
-    npm install @everezze/drama
+npm install @everezze/drama
 ```
 
 ### Optimizations
