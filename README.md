@@ -7,7 +7,7 @@ able to do it both vertically and horizontally !
 ### Demo
 
 <video>
-    <source src="/assets/drama_demo">
+    <source src="/assets/drama_demo.mp4">
 </video>
 
 ### Setup
