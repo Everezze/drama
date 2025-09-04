@@ -6,7 +6,7 @@ able to do it both vertically and horizontally !
 
 ### Demo
 
-![](/assets/drama_demo.mp4)
+![](/assets/drama_demo.mp4.gif)
 
 ### Setup
 
