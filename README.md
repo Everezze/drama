@@ -6,7 +6,7 @@ able to do it both vertically and horizontally !
 
 ### Demo
 
-<video controls>
+<video controls width="500" height="300">
     <source src="/assets/drama_demo.mp4" type="video/mp4">
 </video>
 
