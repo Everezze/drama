@@ -7,7 +7,7 @@ able to do it both vertically and horizontally !
 ### Demo
 
 <video>
-    <source src="./assets/drama_demo">
+    <source src="/assets/drama_demo">
 </video>
 
 ### Setup
@@ -19,7 +19,6 @@ able to do it both vertically and horizontally !
     //values after.
     
     selector: any valid css selector, if element not found return empty object.
-    THE SELECTOR MUST BE THE DIRECT PARENT OF THE ELEMENTS YOU WANT TO DRAG!
 
     options: {
         direction:"hor" or "vert",
@@ -44,7 +43,8 @@ able to do it both vertically and horizontally !
     new Drama(.container,options);
 ```
 
-#### Gotchas
+#### gotchas
+* The selector must be the **direct parent** of the elements you want to drag!
 * The dragging manager won't look for the nearest colored ancestor to match
 background so you will always want to specify the color option or else you
 will have a default grey one.
