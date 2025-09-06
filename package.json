@@ -1,6 +1,6 @@
 {
   "name": "@everezze/drama",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a simple dragging manager for both axis",
   "main": "drama.js",
   "type": "module",
