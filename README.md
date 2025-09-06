@@ -11,7 +11,7 @@ able to do it both vertically and horizontally !
 ### Setup
 
 ```js
-    new Drama(selector,{options});
+    new Drama(selector: string,{options});
     //Every drag is stored on the class prototype property so
     //no need to store it in variable except if you want to change some
     //values after.
@@ -20,7 +20,7 @@ able to do it both vertically and horizontally !
 
     options: {
         direction:"hor" or "vert",
-        hint:[invalidDrop, validDrop], // visual indicator for insertion
+        hint:[color for invalid drop, color for valid drop],
         color: a valid css color format //background color when dragging element
         transition: "margin .15s ease-out"
         spacing: how big the drop hint space should be
@@ -38,7 +38,7 @@ able to do it both vertically and horizontally !
     const options = {color:hsl(211,87%,50%),hint:['#d10000','#00ab66'],
     transition: "margin .15s ease-out"};
 
-    new Drama(.container,options);
+    new Drama(".container",options);
 ```
 
 #### gotchas
